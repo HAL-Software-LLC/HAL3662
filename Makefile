@@ -26,33 +26,44 @@ HTML := $(DOC)/hal3662.html
 all: $(MODS) $(HTML)
 	mkdir -p $(LOG)
 	$(PYTHON) -m compileall $(PACKAGE) > $(LOG)/compileall.txt
-	$(PYTHON) -m unittest discover -t $(PACKAGE) > $(LOG)/unittest.discover.txt
+	$(PYTHON) -m unittest discover -t . > $(LOG)/unittest.discover.txt
 
+# build package only
+build: $(MODS)
+
+# build package and documentation only
+doc: $(MODS) $(HTML)
+
+# discover and run tests
+test:
+	$(PYTHON) -m unittest discover -t .
+
+# create cache files
+cache: $(MODS)
+	$(PYTHON) -m compileall $(PACKAGE)
+	
 # copy python module from source directory
 $(PACKAGE)/%.py: $(SRC)/%.py
 	mkdir -p $(@D)
 	cp $< $@
 
-# generate documentation
+# create documentation
 $(DOC)/hal3662.html:
 	mkdir -p $(@D)
 	$(PYTHON) -m pydoc hal3662 > $@
-
-# discover and run tests
-test:
-	$(PYTHON) -m unittest discover -t $(PACKAGE)
 
 # create virtual environment
 venv:
 	$(PYTHON) -m venv $(VENV)
 	$(PYTHON) -m pip install -r requirements.txt
 
-# create cache files
-cache:
-	$(PYTHON) -m compileall $(PACKAGE)
-	
+# activate virtual environment
+activate:
+	source $(VENV)/bin/activate
+
 # do cleanup
 clean:
+	rm -Rf $(DOC)
 	rm -Rf $(LOG)
 	rm -Rf $(PACKAGE)
 	rm -Rf $(VENV)
