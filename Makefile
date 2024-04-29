@@ -61,7 +61,7 @@ $(VENV):
 	$(PYTHON) -m venv $(VENV)
 
 # install python dependencies in virtual enviornment
-requirements: $(VENV) requirements.txt
+reqs: $(VENV) requirements.txt
 	$(PYTHON) -m pip install -r requirements.txt
 
 # activate virtual environment
