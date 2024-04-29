@@ -2,8 +2,6 @@
 PYTHON := python3
 HOST := 0.0.0.0
 PORT := 3662
-CERT := cert.pem
-KEY := key.pem
 
 # directories
 DOC := docs
@@ -11,6 +9,10 @@ LOG := log
 PACKAGE := hal3662
 SRC := src
 VENV := venv
+
+# more config
+CERT := $(VENV)/ssl/cert.pem
+KEY := $(VENV)/ssl/key.pem
 
 # hal3662 package
 MODS := $(PACKAGE)/__init__.py
@@ -25,7 +27,7 @@ MODS := $(PACKAGE)/__init__.py
 HTML := $(DOC)/hal3662.html
 
 # build everything and deploy flask test server
-all: $(MODS) $(HTML)
+all: $(MODS) $(HTML) $(CERT)
 	$(PYTHON) -m compileall $(PACKAGE)
 	$(PYTHON) -m flask --app hal3662 run --host=$(HOST) --port=$(PORT) --cert=$(CERT) --key=$(KEY)
 
@@ -59,13 +61,13 @@ deploy: $(MODS) $(CERT)
 	$(PYTHON) -m flask --app hal3662 run --host=$(HOST) --port=$(PORT) --cert=$(CERT) --key=$(KEY)
 
 # generate certificate for test website
-cert.pem:
-	openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -sha256 -days 365 -nodes
+$(VENV)/ssl/cert.pem: $(VENV)
+	mkdir -p $(VENV)/ssl
+	openssl req -x509 -newkey rsa:4096 -keyout $(@D)/key.pem -out $(@D)/cert.pem -sha256 -days 365 -nodes
 
 # create virtual environment
-venv:
+$(VENV):
 	$(PYTHON) -m venv $(VENV)
-	$(PYTHON) -m pip install -r requirements.txt
 
 # activate virtual environment
 activate:
