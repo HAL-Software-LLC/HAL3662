@@ -20,14 +20,22 @@ import unittest as _unittest
 import flask as _flask
 import requests as _requests
 
-app = _flask.Flask(__name__)
+# define Flask app for the package
+app = _flask.Flask(__package__)
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET'])
 def index():
   """
   Serve documentation for package.
   """
-  return _flask.send_from_directory('../docs', 'hal3662.html')
+  return _flask.send_from_directory('docs', 'hal3662.html')
+
+@app.route('/<path:path>', methods=['GET'])
+def file():
+  """
+  Serve documentation for module in package.
+  """
+  return _flask.send_from_directory('docs', path)
 
 class _Tests(_unittest.TestCase):
   """

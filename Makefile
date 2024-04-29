@@ -4,31 +4,26 @@ HOST := 0.0.0.0
 PORT := 3662
 
 # directories
-DOC := docs
-LOG := log
 PACKAGE := hal3662
 SRC := src
 SSL := ssl
 VENV := venv
 
-# more config
-CERT := $(SSL)/cert.pem
-KEY := $(SSL)/key.pem
-
 # hal3662 package
 MODS := $(PACKAGE)/__init__.py
 #MODS += $(PACKAGE)/auth.py
 #MODS += $(PACKAGE)/billing.py
+MODS += $(PACKAGE)/info.py
 
 # hal3662.calculate package
 #MODS += $(PACKAGE)/calculate/__init__.py
 #MODS += $(PACKAGE)/calculate/reverse.py
 
 # documentation
-HTML := $(DOC)/hal3662.html
+HTML := $(PACKAGE)/doc/hal3662.html
 
 # build everything and deploy flask test server
-all: $(MODS) $(HTML) $(CERT)
+all: $(MODS) $(HTML)
 	$(PYTHON) -m compileall $(PACKAGE)
 	$(PYTHON) -m flask --app hal3662 run --host=$(HOST) --port=$(PORT)
 
@@ -53,19 +48,13 @@ $(PACKAGE)/%.py: $(SRC)/%.py
 	cp $< $@
 
 # create documentation
-$(DOC)/hal3662.html: $(PACKAGE)/__init__.py
+$(PACKAGE)/doc/hal3662.html: $(PACKAGE)/__init__.py
 	mkdir -p $(@D)
 	$(PYTHON) -m pydoc hal3662 > $@
 
 # deploy test website
-deploy: $(MODS) $(CERT)
-	#$(PYTHON) -m flask --app hal3662 run --host=$(HOST) --port=$(PORT) --cert=$(CERT) --key=$(KEY)
+deploy: $(MODS)
 	$(PYTHON) -m flask --app hal3662 run --host=$(HOST) --port=$(PORT)
-
-# generate certificate for test website
-ssl/cert.pem:
-	mkdir -p $(@D)
-	openssl req -x509 -newkey rsa:4096 -keyout $(@D)/key.pem -out $(@D)/cert.pem -sha256 -days 365 -nodes
 
 # create virtual environment (activate with `source venv/bin/activate`)
 $(VENV):
@@ -81,10 +70,7 @@ activate:
 
 # do cleanup
 clean:
-	rm -Rf $(DOC)
-	rm -Rf $(LOG)
 	rm -Rf $(PACKAGE)
-	#rm -Rf $(SSL) # leave this one around
 	rm -Rf $(VENV)
 
 # print value of a variable
