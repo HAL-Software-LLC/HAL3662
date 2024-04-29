@@ -24,14 +24,14 @@ MODS := $(PACKAGE)/__init__.py
 # documentation
 HTML := $(DOC)/hal3662.html
 
-# build everything and run unit tests
+# build everything and deploy flask test server
 all: $(MODS) $(HTML)
-	mkdir -p $(LOG)
-	$(PYTHON) -m compileall $(PACKAGE) > $(LOG)/compileall.txt
-	$(PYTHON) -m unittest discover -t . > $(LOG)/unittest.discover.txt
+	$(PYTHON) -m compileall $(PACKAGE)
+	$(PYTHON) -m flask --app hal3662 run --host=$(HOST) --port=$(PORT) --cert=$(CERT) --key=$(KEY)
 
 # build package only
 build: $(MODS)
+	$(PYTHON) -m compileall $(PACKAGE)
 
 # build package and documentation only
 doc: $(MODS) $(HTML)
