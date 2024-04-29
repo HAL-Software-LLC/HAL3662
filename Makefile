@@ -30,7 +30,7 @@ HTML := $(DOC)/hal3662.html
 # build everything and deploy flask test server
 all: $(MODS) $(HTML) $(CERT)
 	$(PYTHON) -m compileall $(PACKAGE)
-	$(PYTHON) -m flask --app hal3662 run --host=$(HOST) --port=$(PORT) --cert=$(CERT) --key=$(KEY)
+	$(PYTHON) -m flask --app hal3662 run --host=$(HOST) --port=$(PORT)
 
 # build package only
 build: $(MODS)
@@ -41,7 +41,7 @@ doc: $(MODS) $(HTML)
 
 # discover and run tests
 test: $(MODS)
-	$(PYTHON) -m unittest discover -t .
+	$(PYTHON) -m unittest discover -s $(PACKAGE) -t .
 
 # create cache files
 cache: $(MODS)
@@ -59,7 +59,8 @@ $(DOC)/hal3662.html: $(PACKAGE)/__init__.py
 
 # deploy test website
 deploy: $(MODS) $(CERT)
-	$(PYTHON) -m flask --app hal3662 run --host=$(HOST) --port=$(PORT) --cert=$(CERT) --key=$(KEY)
+	#$(PYTHON) -m flask --app hal3662 run --host=$(HOST) --port=$(PORT) --cert=$(CERT) --key=$(KEY)
+	$(PYTHON) -m flask --app hal3662 run --host=$(HOST) --port=$(PORT)
 
 # generate certificate for test website
 ssl/cert.pem:
