@@ -8,11 +8,12 @@ DOC := docs
 LOG := log
 PACKAGE := hal3662
 SRC := src
+SSL := ssl
 VENV := venv
 
 # more config
-CERT := $(VENV)/ssl/cert.pem
-KEY := $(VENV)/ssl/key.pem
+CERT := $(SSL)/cert.pem
+KEY := $(SSL)/key.pem
 
 # hal3662 package
 MODS := $(PACKAGE)/__init__.py
@@ -61,13 +62,17 @@ deploy: $(MODS) $(CERT)
 	$(PYTHON) -m flask --app hal3662 run --host=$(HOST) --port=$(PORT) --cert=$(CERT) --key=$(KEY)
 
 # generate certificate for test website
-$(VENV)/ssl/cert.pem: $(VENV)
-	mkdir -p $(VENV)/ssl
+ssl/cert.pem:
+	mkdir -p $(@D)
 	openssl req -x509 -newkey rsa:4096 -keyout $(@D)/key.pem -out $(@D)/cert.pem -sha256 -days 365 -nodes
 
-# create virtual environment
+# create virtual environment (activate with `source venv/bin/activate`)
 $(VENV):
 	$(PYTHON) -m venv $(VENV)
+
+# install python dependencies in virtual enviornment
+requirements: $(VENV) requirements.txt
+	$(PYTHON) -m pip install -r requirements.txt
 
 # activate virtual environment
 activate:
@@ -78,6 +83,7 @@ clean:
 	rm -Rf $(DOC)
 	rm -Rf $(LOG)
 	rm -Rf $(PACKAGE)
+	#rm -Rf $(SSL) # leave this one around
 	rm -Rf $(VENV)
 
 # print value of a variable

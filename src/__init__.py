@@ -13,21 +13,23 @@ Contributing
 ------------
 See: https://github.com/HAL-Software-LLC/HAL3662
 """
-import flask as _flask
 import logging as _logging
 import traceback as _traceback
 import unittest as _unittest
 
+import flask as _flask
+import requests as _requests
+
 app = _flask.Flask(__package__)
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET'])
 def index():
   """
   Serve user-provided index file from `static/index.html`.
   """
   return _flask.send_from_directory("static", "index.html")
 
-@app.route('/<path:path>', methods=['GET', 'POST'])
+@app.route('/<path:path>', methods=['GET'])
 def files():
   """
   Server user-provided files from `static/<path>`.
@@ -45,4 +47,9 @@ class _Tests(_unittest.TestCase):
     """
     import hal3662
 
-print("we are moving")
+  def test_index(self):
+    """
+    Try to GET the /index.html page.
+    """
+    r = requests.get("https://127.0.0.1:3662")
+    self.assertEqual(r.status_code, 200)

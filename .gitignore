@@ -1,4 +1,7 @@
 docs
 log
 hal3662
+ssl
 static
+venv
+*/__pycache__/*
