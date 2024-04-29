@@ -20,11 +20,29 @@ import unittest as _unittest
 
 app = _flask.Flask(__package__)
 
-@app.route('/', method=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def index():
   """
   Serve user-provided index file from `static/index.html`.
   """
   return _flask.send_from_directory("static", "index.html")
 
+@app.route('/<path:path>', methods=['GET', 'POST'])
+def files():
+  """
+  Server user-provided files from `static/<path>`.
+  """
+  return _flask.send_from_directory("static", path)
 
+class _Tests(_unittest.TestCase):
+  """
+  Test the hal3662 package.
+  """
+
+  def test_import(self):
+    """
+    Make sure import works okay.
+    """
+    import hal3662
+
+print("we are moving")

@@ -2,6 +2,8 @@
 PYTHON := python3
 HOST := 0.0.0.0
 PORT := 3662
+CERT := cert.pem
+KEY := key.pem
 
 # directories
 DOC := docs
@@ -35,7 +37,7 @@ build: $(MODS)
 doc: $(MODS) $(HTML)
 
 # discover and run tests
-test:
+test: $(MODS)
 	$(PYTHON) -m unittest discover -t .
 
 # create cache files
@@ -48,9 +50,17 @@ $(PACKAGE)/%.py: $(SRC)/%.py
 	cp $< $@
 
 # create documentation
-$(DOC)/hal3662.html:
+$(DOC)/hal3662.html: $(PACKAGE)/__init__.py
 	mkdir -p $(@D)
 	$(PYTHON) -m pydoc hal3662 > $@
+
+# deploy test website
+deploy: $(MODS) $(CERT)
+	$(PYTHON) -m flask --app hal3662 run --host=$(HOST) --port=$(PORT) --cert=$(CERT) --key=$(KEY)
+
+# generate certificate for test website
+cert.pem:
+	openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -sha256 -days 365 -nodes
 
 # create virtual environment
 venv:
