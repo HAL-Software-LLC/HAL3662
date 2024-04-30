@@ -77,7 +77,6 @@ activate:
 # do cleanup
 clean:
 	rm -Rf $(PACKAGE)
-	rm -Rf $(VENV)
 
 # print value of a variable
 print-%:
