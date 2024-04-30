@@ -20,24 +20,14 @@ import unittest as _unittest
 import flask as _flask
 import requests as _requests
 
-# define Flask app for the package
-app = _flask.Flask(__package__)
+app = _flask.Flask(__name__)
 
-import hal3662.info
-
-@app.route('/', methods=['GET'])
+@app.route('/', methods=['GET', 'POST'])
 def index():
   """
   Serve documentation for package.
   """
-  return _flask.send_from_directory('docs', 'hal3662.html')
-
-@app.route('/<path:path>', methods=['GET'])
-def file():
-  """
-  Serve documentation for module in package.
-  """
-  return _flask.send_from_directory('docs', path)
+  return _flask.send_from_directory('../docs', 'hal3662.html')
 
 class _Tests(_unittest.TestCase):
   """
@@ -51,7 +41,7 @@ class _Tests(_unittest.TestCase):
 
   def test_index(self):
     """
-    Try to GET the root page.
+    Try to GET the /index.html page.
     """
     r = _requests.get('http://127.0.0.1:3662')
     self.assertEqual(r.status_code, 200)

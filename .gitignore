@@ -4,3 +4,4 @@ ssl
 static
 venv
 */__pycache__/*
+*.swp

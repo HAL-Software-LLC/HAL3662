@@ -21,6 +21,7 @@ MODS += $(PACKAGE)/info.py
 
 # documentation
 HTML := $(PACKAGE)/doc/hal3662.html
+HTML += $(PACKAGE)/doc/info.html
 
 # build everything and deploy flask test server
 all: $(MODS) $(HTML)
@@ -47,10 +48,15 @@ $(PACKAGE)/%.py: $(SRC)/%.py
 	mkdir -p $(@D)
 	cp $< $@
 
-# create documentation
+# create documentation for package
 $(PACKAGE)/doc/hal3662.html: $(PACKAGE)/__init__.py
 	mkdir -p $(@D)
 	$(PYTHON) -m pydoc hal3662 > $@
+
+# create documentation for module
+$(PACKAGE)/doc/%.html: $(PACKAGE)/%.py
+	mkdir -p $(@D)
+	$(PYTHON) -m pydoc $(basename $(@F)) > $@
 
 # deploy test website
 deploy: $(MODS)
