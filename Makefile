@@ -2,6 +2,8 @@
 PYTHON := python3
 HOST := 0.0.0.0
 PORT := 3662
+RHOST := 127.0.0.0
+RPORT := 3662
 
 # directories
 DOC := docs
@@ -14,7 +16,7 @@ VENV := venv
 MODS := $(PACKAGE)/__init__.py
 #MODS += $(PACKAGE)/auth.py
 #MODS += $(PACKAGE)/billing.py
-MODS += $(PACKAGE)/info.py
+MODS += $(PACKAGE)/environ.py
 
 # hal3662.calculate package
 #MODS += $(PACKAGE)/calculate/__init__.py
@@ -40,7 +42,8 @@ doc: $(MODS)
 
 # discover and run tests
 test: $(MODS)
-	$(PYTHON) -m unittest discover -s $(PACKAGE) -t .
+	$(PYTHON) -m unittest hal3662
+	$(PYTHON) -m unittest hal3662.environ
 
 # create cache files
 cache: $(MODS)

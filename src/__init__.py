@@ -26,8 +26,11 @@ _logging.basicConfig(level=_logging.INFO)
 # create Flask app for the package
 app = _flask.Flask(__package__)
 
-# import objects from all modules
-from .info import *
+# finish constructing the package
+#import hal3662.auth
+#import hal3662.billing
+#import hal3662.calculate
+import hal3662.environ
 
 @app.route('/', methods=['GET', 'POST'])
 def root():
