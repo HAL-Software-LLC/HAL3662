@@ -4,6 +4,7 @@ HOST := 0.0.0.0
 PORT := 3662
 
 # directories
+DOC := docs
 PACKAGE := hal3662
 SRC := src
 SSL := ssl
@@ -21,19 +22,21 @@ MODS += $(PACKAGE)/info.py
 
 # build everything and deploy flask test server
 all: $(MODS)
-	mkdir -p $(PACKAGE)/docs
-	$(PYTHON) -m pdoc --no-search -o $(PACKAGE)/docs hal3662
+	mkdir -p $(DOC)
+	$(PYTHON) -m pdoc --no-search -o $(DOC) hal3662
+	rsync -r $(DOC) $(PACKAGE)/docs
 	$(PYTHON) -m compileall $(PACKAGE)
 	$(PYTHON) -m flask --app hal3662 run --host=$(HOST) --port=$(PORT)
 
-# build package only
+# build and compile package
 build: $(MODS)
 	$(PYTHON) -m compileall $(PACKAGE)
 
-# build package and documentation only
+# build package and documentation
 doc: $(MODS)
-	mkdir -p $(PACKAGE)/docs
-	$(PYTHON) -m pdoc --no-search -o $(PACKAGE)/docs hal3662
+	mkdir -p $(DOC)
+	$(PYTHON) -m pdoc --no-search -o $(DOC) hal3662
+	rsync -r $(DOC) $(PACKAGE)/docs
 
 # discover and run tests
 test: $(MODS)
@@ -47,23 +50,6 @@ cache: $(MODS)
 $(PACKAGE)/%.py: $(SRC)/%.py
 	mkdir -p $(@D)
 	cp $< $@
-
-# create documentation for module
-$(PACKAGE)/docs/hal3662.html: $(PACKAGE)/__init__.py
-	mkdir -p $(@D)
-	$(PYTHON) -m pydoc -w hal3662
-	mv hal3662.html $@
-
-$(PACKAGE)/docs/hal3662.info.html: $(PACKAGE)/info.py
-	mkdir -p $(@D)
-	$(PYTHON) -m pydoc -w hal3662.info
-	mv hal3662.info.html $@
-
-# create documentation for module
-$(PACKAGE)/docs/%.html: $(PACKAGE)/%.py
-	mkdir -p $(@D)
-	$(PYTHON) -m pydoc -w hal3662.$(basename $(@F))
-	mv hal3662.$(basename $(@F)).html $@
 
 # deploy test website
 deploy: $(MODS)
