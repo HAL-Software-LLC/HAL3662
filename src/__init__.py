@@ -26,31 +26,40 @@ _logging.basicConfig(level=_logging.INFO)
 # create Flask app for the package
 app = _flask.Flask(__package__)
 
-# import objects from all modules
-from .info import *
+# finish constructing the package
+#import hal3662.auth
+#import hal3662.billing
+#import hal3662.calculate
+import hal3662.environ
 
 @app.route('/', methods=['GET', 'POST'])
-def root():
+def hal3662():
   """
   Return information about the `hal3662` python package.
   """
-  return _flask.send_from_directory('docs', 'index.html')
-
-@app.route('/favicon.ico', methods=['GET', 'POST'])
-def favicon():
-  """
-  Return favicon.ico file for the HAL 3662 system.
-  """
-  r = _flask.make_response(_ico)
-  r.mimetype = "image/ico"
-  return r
+  if _flask.request.method == 'GET':
+    return _flask.send_from_directory('docs', 'hal3662.html')
+  return _flask.jsonify(None)
 
 @app.route('/<path:path>', methods=['GET', 'POST'])
 def docs(path):
   """
   Return static HTML from the docs directory.
   """
-  return _flask.send_from_directory('docs', path)
+  if _flask.request.method == 'GET':
+    return _flask.send_from_directory('docs', path)
+  return _flask.jsonify(None)
+
+@app.route('/favicon.ico', methods=['GET', 'POST'])
+def favicon():
+  """
+  Return favicon.ico file for the HAL 3662 system.
+  """
+  if _flask.request.method == 'GET':
+    r = _flask.make_response(_ico)
+    r.mimetype = "image/ico"
+    return r
+  return _flask.jsonify(None)
 
 class _Tests(_unittest.TestCase):
   """
@@ -69,7 +78,7 @@ class _Tests(_unittest.TestCase):
     """
     r = _requests.get('http://127.0.0.1:3662')
     self.assertEqual(r.status_code, 200)
-    with open('hal3662/docs/index.html') as f:
+    with open('hal3662/docs/hal3662.html') as f:
       e = f.read()
     self.assertEqual(r.text, e)
 
@@ -80,9 +89,7 @@ class _Tests(_unittest.TestCase):
     j = {'Nick': 'Becker', 'HAL': 8943}
     r = _requests.post('http://127.0.0.1:3662', json=j)
     self.assertEqual(r.status_code, 200)
-    with open('hal3662/docs/index.html') as f:
-      e = f.read()
-    self.assertEqual(r.text, e)
+    self.assertEqual(r.json(), None)
 
   def test_favicon_get(self):
     """
@@ -92,11 +99,14 @@ class _Tests(_unittest.TestCase):
     self.assertEqual(r.status_code, 200)
     self.assertEqual(r.content, _ico)
 
-  def test_favicon_put(self):
+  def test_favicon_post(self):
+    """
+    Try to POST the resource at /favicon.ico.
+    """
     j = {'Nick': 'Becker', 'HAL': 8943}
     r = _requests.post('http://127.0.0.1:3662/favicon.ico', json=j)
     self.assertEqual(r.status_code, 200)
-    self.assertEqual(r.content, _ico)
+    self.assertEqual(r.json(), None)
 
   def test_docs_get(self):
     """
@@ -115,9 +125,7 @@ class _Tests(_unittest.TestCase):
     j = {'Nick': 'Becker', 'HAL': 8943}
     r = _requests.post('http://127.0.0.1:3662/hal3662.html', json=j)
     self.assertEqual(r.status_code, 200)
-    with open('hal3662/docs/hal3662.html') as f:
-      e = f.read()
-    self.assertEqual(r.text, e)
+    self.assertEqual(r.json(), None)
 
 # favicon.ico file
 _ico = _base64.b64decode(b""
