@@ -20,8 +20,8 @@ MODS += $(PACKAGE)/info.py
 #MODS += $(PACKAGE)/calculate/reverse.py
 
 # documentation
-HTML := $(PACKAGE)/doc/hal3662.html
-HTML += $(PACKAGE)/doc/info.html
+HTML := $(PACKAGE)/docs/hal3662.html
+HTML += $(PACKAGE)/docs/hal3662.info.html
 
 # build everything and deploy flask test server
 all: $(MODS) $(HTML)
@@ -48,15 +48,22 @@ $(PACKAGE)/%.py: $(SRC)/%.py
 	mkdir -p $(@D)
 	cp $< $@
 
-# create documentation for package
-$(PACKAGE)/doc/hal3662.html: $(PACKAGE)/__init__.py
+# create documentation for module
+$(PACKAGE)/docs/hal3662.html: $(PACKAGE)/__init__.py
 	mkdir -p $(@D)
-	$(PYTHON) -m pydoc hal3662 > $@
+	$(PYTHON) -m pydoc -w hal3662
+	mv hal3662.html $@
+
+$(PACKAGE)/docs/hal3662.info.html: $(PACKAGE)/info.py
+	mkdir -p $(@D)
+	$(PYTHON) -m pydoc -w hal3662.info
+	mv hal3662.info.html $@
 
 # create documentation for module
-$(PACKAGE)/doc/%.html: $(PACKAGE)/%.py
+$(PACKAGE)/docs/%.html: $(PACKAGE)/%.py
 	mkdir -p $(@D)
-	$(PYTHON) -m pydoc $(basename $(@F)) > $@
+	$(PYTHON) -m pydoc -w hal3662.$(basename $(@F))
+	mv hal3662.$(basename $(@F)).html $@
 
 # deploy test website
 deploy: $(MODS)

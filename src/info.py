@@ -1,18 +1,5 @@
-"""__init__.py - hal3662 package
+"""info.py - hal3662.info module"""
 
-Provides
---------
-Deployable web services with an eco-conscious billing system.
-
-Documentation
--------------
-Documentation is provided primarily by python docstrings. The documentatation is
-hosted on GitHub Pages at the following URL: 
-
-Contributing
-------------
-See: https://github.com/HAL-Software-LLC/HAL3662
-"""
 import logging as _logging
 import traceback as _traceback
 import unittest as _unittest
@@ -20,30 +7,34 @@ import unittest as _unittest
 import flask as _flask
 import requests as _requests
 
-app = _flask.Flask(__name__)
+# locate Flask app for the package
+from . import app
 
-@app.route('/', methods=['GET', 'POST'])
-def index():
+@app.route('/info', methods=['GET', 'POST'])
+def info():
   """
-  Serve documentation for package.
+  Return information about the HAL 3662 system.
   """
-  return _flask.send_from_directory('../docs', 'hal3662.html')
+  if _flask.request.method == 'GET':
+    return _flask.send_from_directory('docs', 'hal3662.info.html')
 
 class _Tests(_unittest.TestCase):
   """
-  Test the hal3662 package.
+  Test the hal3662.info module
   """
   def test_import(self):
     """
-    Make sure import works okay.
+    Import the module
     """
-    import hal3662
+    import hal3662.info
 
-  def test_index(self):
+  def test_get(self):
     """
-    Try to GET the /index.html page.
+    Do an HTTP GET of the /info function.
     """
-    r = _requests.get('http://127.0.0.1:3662')
+    r = _requests.get('http://127.0.0.1:3662/info')
     self.assertEqual(r.status_code, 200)
-    fragment = "Deployable web services with an eco-conscious billing system."
-    self.assertIn(fragment, r.text)
+    for f in __doc__.split('\n'):
+      if len(strip(f)) > 0:
+        _logging.debug(f)
+        self.assertIn(f, r.text)
