@@ -24,7 +24,7 @@ MODS += $(PACKAGE)/info.py
 all: $(MODS)
 	mkdir -p $(DOC)
 	$(PYTHON) -m pdoc --no-search -o $(DOC) hal3662
-	rsync -r $(DOC) $(PACKAGE)/docs
+	rsync -r $(DOC) $(PACKAGE)/.
 	$(PYTHON) -m compileall $(PACKAGE)
 	$(PYTHON) -m flask --app hal3662 run --host=$(HOST) --port=$(PORT)
 
@@ -36,7 +36,7 @@ build: $(MODS)
 doc: $(MODS)
 	mkdir -p $(DOC)
 	$(PYTHON) -m pdoc --no-search -o $(DOC) hal3662
-	rsync -r $(DOC) $(PACKAGE)/docs
+	rsync -r $(DOC) $(PACKAGE)/.
 
 # discover and run tests
 test: $(MODS)
