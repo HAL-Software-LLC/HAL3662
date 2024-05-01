@@ -22,6 +22,10 @@ MODS += $(PACKAGE)/environ.py
 #MODS += $(PACKAGE)/calculate/__init__.py
 #MODS += $(PACKAGE)/calculate/reverse.py
 
+# hal3662.jasmine package
+MODS += $(PACKAGE)/jasmine/__init__.py
+MODS += $(PACKAGE)/jasmine/automate.py
+
 # build everything and deploy flask test server
 all: $(MODS)
 	mkdir -p $(DOC)
@@ -44,6 +48,7 @@ doc: $(MODS)
 test: $(MODS)
 	$(PYTHON) -m unittest hal3662
 	$(PYTHON) -m unittest hal3662.environ
+	$(PYTHON) -m unittest hal3662.jasmine
 
 # create cache files
 cache: $(MODS)
