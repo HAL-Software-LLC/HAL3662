@@ -19,12 +19,10 @@ MODS += $(PACKAGE)/info.py
 #MODS += $(PACKAGE)/calculate/__init__.py
 #MODS += $(PACKAGE)/calculate/reverse.py
 
-# documentation
-HTML := $(PACKAGE)/docs/hal3662.html
-HTML += $(PACKAGE)/docs/hal3662.info.html
-
 # build everything and deploy flask test server
-all: $(MODS) $(HTML)
+all: $(MODS)
+	mkdir -p $(PACKAGE)/docs
+	$(PYTHON) -m pdoc --no-search -o $(PACKAGE)/docs hal3662
 	$(PYTHON) -m compileall $(PACKAGE)
 	$(PYTHON) -m flask --app hal3662 run --host=$(HOST) --port=$(PORT)
 
@@ -33,7 +31,9 @@ build: $(MODS)
 	$(PYTHON) -m compileall $(PACKAGE)
 
 # build package and documentation only
-doc: $(MODS) $(HTML)
+doc: $(MODS)
+	mkdir -p $(PACKAGE)/docs
+	$(PYTHON) -m pdoc --no-search -o $(PACKAGE)/docs hal3662
 
 # discover and run tests
 test: $(MODS)

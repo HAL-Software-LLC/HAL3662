@@ -16,7 +16,7 @@ def info():
   Return information about the HAL 3662 system.
   """
   if _flask.request.method == 'GET':
-    return _flask.send_from_directory('docs', 'hal3662.info.html')
+    return _flask.send_from_directory('docs/hal3662', 'info.html')
 
 class _Tests(_unittest.TestCase):
   """
