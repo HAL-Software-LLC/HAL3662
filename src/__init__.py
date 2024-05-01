@@ -31,7 +31,6 @@ app = _flask.Flask(__package__)
 #import hal3662.billing
 #import hal3662.calculate
 import hal3662.environ
-import hal3662.jasmine
 
 @app.route('/', methods=['GET', 'POST'])
 def hal3662():
